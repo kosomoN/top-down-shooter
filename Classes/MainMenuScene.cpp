@@ -1,4 +1,5 @@
 #include "MainMenuScene.h"
+#include "Player.h"
 
 USING_NS_CC;
 
@@ -9,6 +10,9 @@ Scene* MainMenu::createScene()
     
     // 'layer' is an autorelease object
 	auto layer = MainMenu::create();
+
+	// Create player
+	Player* player = new Player(scene, 100, 100);
 
     // add layer as a child to scene
     scene->addChild(layer);

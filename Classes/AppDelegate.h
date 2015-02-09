@@ -2,6 +2,8 @@
 #define  _APP_DELEGATE_H_
 
 #include "cocos2d.h"
+#include "State.h"
+#include <vector>
 
 /**
 @brief    The cocos2d Application.
@@ -34,6 +36,13 @@ public:
     @param  the pointer of the application
     */
     virtual void applicationWillEnterForeground();
+
+	const int GAMESTATE = 0;
+
+private:
+	std::map<int, cocos2d::Scene*> scenes;
+	void loadScenes(cocos2d::Director *director);
+	void changeScene(cocos2d::Director *director, cocos2d::Scene* scene);
 };
 
 #endif // _APP_DELEGATE_H_

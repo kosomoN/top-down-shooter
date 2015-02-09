@@ -1,5 +1,7 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.h"
+#include "State.h"
+#include "GameState.h"
 
 USING_NS_CC;
 
@@ -38,12 +40,24 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-	auto scene = MainMenu::createScene();
+	//auto scene = MainMenu::createScene();
+	loadScenes(director);
 
     // run
-    director->runWithScene(scene);
+	director->runWithScene(scenes.at(GAMESTATE));
 
     return true;
+}
+
+void AppDelegate::loadScenes(Director *director)
+{
+	State *state = new GameState();
+	scenes.insert(std::pair<int, cocos2d::Scene*>(GAMESTATE, state->getScene()));
+}
+
+void AppDelegate::changeScene(Director* director, Scene* scene)
+{
+	director->replaceScene(scene);
 }
 
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
