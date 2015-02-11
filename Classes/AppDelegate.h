@@ -5,6 +5,8 @@
 #include "State.h"
 #include <vector>
 
+using namespace cocos2d;
+
 /**
 @brief    The cocos2d Application.
 
@@ -40,9 +42,9 @@ public:
 	const int GAMESTATE = 0;
 
 private:
-	std::map<int, cocos2d::Scene*> scenes;
-	void loadScenes(cocos2d::Director *director);
-	void changeScene(cocos2d::Director *director, cocos2d::Scene* scene);
+	std::vector<Scene*> scenes;
+	void loadScenes();
+	void changeScene(int state);
 };
 
 #endif // _APP_DELEGATE_H_

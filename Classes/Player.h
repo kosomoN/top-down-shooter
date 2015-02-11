@@ -2,16 +2,26 @@
 #define PLAYER_H
 
 #include "cocos2d.h"
+class GameState;
 #include "Entity.h"
 
-class Player : public Entity
+class Player : public virtual Entity
 {
 public:
-	Player(cocos2d::Scene* scene, float x, float y);
-	cocos2d::Sprite* getSprite();
+	Player(GameState *s, Vec2 position);
 
+	void update(float dt);
+	void setVelocity(Vec2 velocity);
+	void addVelocity(Vec2 velocity);
+	void setPosition(Vec2 pos);
+	void addPosition(Vec2 pos);
+	Vec2 getVelocity();
+	Sprite* getSprite();
 private:
-	cocos2d::Sprite *sprite;
+	Sprite *sprite;
+	GameState *gs;
+	Vec2 velocity;
+	float maxVelocity;
 };
 
 #endif

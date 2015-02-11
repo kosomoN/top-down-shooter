@@ -3,13 +3,17 @@
 
 #include "cocos2d.h"
 
+using namespace cocos2d;
+
 class Entity
 {
 public:
-	Entity();
-	~Entity();
-	void setPosition(float x, float y);
+	virtual void update(float dt) = 0;
+
+	void setPosition(Vec2 position);
+	void addPosition(Vec2 position);
+	Vec2 getPosition();
 protected:
-	cocos2d::Vec2 position;
+	Vec2 position;
 };
 #endif

@@ -1,11 +1,11 @@
 #include "AppDelegate.h"
 #include "MainMenuScene.h"
-#include "State.h"
 #include "GameState.h"
 
 USING_NS_CC;
 
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate()
+{
 
 }
 
@@ -37,11 +37,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setDisplayStats(true);
 
     // set FPS. the default value is 1.0/60 if you don't call this
-    director->setAnimationInterval(1.0 / 60);
+    director->setAnimationInterval(1.0 / 6000);
 
     // create a scene. it's an autorelease object
 	//auto scene = MainMenu::createScene();
-	loadScenes(director);
+	loadScenes();
 
     // run
 	director->runWithScene(scenes.at(GAMESTATE));
@@ -49,15 +49,15 @@ bool AppDelegate::applicationDidFinishLaunching() {
     return true;
 }
 
-void AppDelegate::loadScenes(Director *director)
+void AppDelegate::loadScenes()
 {
-	State *state = new GameState();
-	scenes.insert(std::pair<int, cocos2d::Scene*>(GAMESTATE, state->getScene()));
+	auto scene = GameState::createScene();
+	scenes.push_back(scene);
 }
 
-void AppDelegate::changeScene(Director* director, Scene* scene)
+void AppDelegate::changeScene(int state)
 {
-	director->replaceScene(scene);
+	Director::getInstance()->replaceScene(scenes.at(state)->getScene());
 }
 
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too

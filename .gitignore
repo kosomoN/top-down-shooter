@@ -29,3 +29,9 @@
 
 cocos2d/
 proj.win32/Debug.win32/
+proj.win32/Cocos2.sdf
+proj.win32/Cocos2.sln
+proj.win32/Cocos2d.vs12.suo
+proj.win32/Cocos2.vcxproj
+proj.win32/Cocos2.vcxproj.filters
+proj.win32/Cocos2.vcxproj.user

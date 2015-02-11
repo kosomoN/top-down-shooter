@@ -1,16 +1,17 @@
 #include "Entity.h"
 
-
-Entity::Entity()
+void Entity::setPosition(Vec2 position)
 {
+	this->position = position;
 }
 
-
-Entity::~Entity()
+void Entity::addPosition(Vec2 position)
 {
+	this->position.x += position.x;
+	this->position.y += position.y;
 }
 
-void Entity::setPosition(float x, float y)
+Vec2 Entity::getPosition()
 {
-	position.set(x, y);
+	return position;
 }
