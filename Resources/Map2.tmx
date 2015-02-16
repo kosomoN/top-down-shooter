@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="10" height="10" tilewidth="128" tileheight="128">
+ <tileset firstgid="1" name="terrain" tilewidth="128" tileheight="128">
+  <image source="Tileset2.png" width="256" height="128"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFgwYDAFB4AGU=
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAJgaGBdgwAxJgYsANgHIHBlodlJ8AwshsGH8oAAAj5gjH
+  </data>
+ </layer>
+ <objectgroup name="Walls">
+  <object x="236" y="108" width="808" height="20"/>
+  <object x="1024" y="128" width="20" height="512"/>
+  <object x="640" y="640" width="404" height="20"/>
+  <object x="236" y="640" width="276" height="20"/>
+  <object x="236" y="128" width="20" height="512"/>
+  <object x="1270" y="2" width="30" height="1274"/>
+  <object x="0" y="1270" width="1298" height="24"/>
+  <object x="-16" y="0" width="22" height="1278"/>
+  <object x="-28" y="0" width="1324" height="8"/>
+ </objectgroup>
+</map>

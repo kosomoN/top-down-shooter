@@ -27,9 +27,6 @@
     <ClCompile Include="..\Classes\GameState.cpp">
       <Filter>src\states</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\MainMenuScene.cpp">
-      <Filter>src\states</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Entity.cpp">
       <Filter>src\entities</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameState.h">
-      <Filter>src\states</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\MainMenuScene.h">
       <Filter>src\states</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Entity.h">

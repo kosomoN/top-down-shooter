@@ -1,82 +1,130 @@
 #include "Player.h"
 #include "GameState.h"
+#include <math.h>
 
 using namespace cocos2d;
 
-Player::Player(GameState *gs, Vec2 position)
+Player::Player(GameState *gs, float x, float y)
 {
-	sprite = Sprite::create("HelloWorld.png");
-	sprite->setPosition(position);
-	gs->addChild(sprite);
-	setPosition(position);
+	char str[100] = { 0 };
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf(str, "walking_anim.png", i);
+		auto frame = SpriteFrame::create(str, Rect((i % 4) * WIDTH, floor(i / 4) * HEIGHT, WIDTH, HEIGHT));
+		animFrames.pushBack(frame);
+	}
+
+	baseNode = Node::create();
+	sprite = Sprite::create("walking_anim.png");
+	baseNode->addChild(sprite);
+
+	auto *animation = Animation::createWithSpriteFrames(animFrames, 0.08f);
+	animation->setLoops(-1);
+	auto *animate = Animate::create(animation);
+	sprite->runAction(animate);
+	
+	setPositionX(x);
+	setPositionY(y);
 	this->gs = gs;
-	this->maxVelocity = 16;
+	this->maxVelocity = 9;
+}
+
+Player::~Player()
+{
+
 }
 
 void Player::update(float dt)
 {
-	bool upKeyPressed = false, sideKeyPressed = false;
+	distX = gs->mouseX - (x + baseNode->getParent()->getPositionX());
+	distY = -gs->mouseY + y + baseNode->getParent()->getPositionY(); // y is swapped
+	float angle = CC_RADIANS_TO_DEGREES(atan2(distY, distX)) + 90;
+	sprite->setRotation(angle);
+	
+	// Getting input
+	updateInput();
+
+	// Moving
+	move();
+}
+
+void Player::move()
+{
+	float tempX = x + dx;
+	float tempY = y + dy;
+	bool x_axis = true, y_axis = true;
+
+	// Checking rectangular hitboxes
+	for (unsigned int i = 0; i < gs->mapHitboxes->getObjects().size(); i++)
+	{
+		ValueMap valMap = gs->mapHitboxes->getObjects().at(i).asValueMap();
+		float valX = valMap["x"].asFloat();
+		float valY = valMap["y"].asFloat();
+		float valWidth = valMap["width"].asFloat();
+		float valHeight = valMap["height"].asFloat();
+
+		if (tempX - offset < valX + valWidth && tempX + offset > valX &&
+			tempY - offset < valY + valHeight && tempY + offset > valY)
+		{
+			// 1. Was x-axis the frame before "intersecting"? if yes then disable y-axis else go to 2.
+			// 2. Was y-axis the frame before "intersecting"? if yes then disable x-axis else do nothing
+
+			if (x - offset < valX + valWidth && x + offset > valX)
+				y_axis = false;
+			else if (y - offset < valY + valHeight && y + offset > valY)
+				x_axis = false;
+		}
+	}
+
+	if (x_axis)
+		setPositionX(tempX);
+	if (y_axis)
+		setPositionY(tempY);
+}
+
+void Player::updateInput()
+{
+	movementMod = 1;
+	// Check if moving diagonally
+	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_W) != gs->isKeyDown(EventKeyboard::KeyCode::KEY_S) &&
+		gs->isKeyDown(EventKeyboard::KeyCode::KEY_A) != gs->isKeyDown(EventKeyboard::KeyCode::KEY_D))
+	{
+		movementMod = DIAGONAL;
+	}
+
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_W))
-	{
-		addVelocity(Vec2(0, 4));
-		upKeyPressed = !upKeyPressed;
-	}
+		dy += 2 * movementMod;
+
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_S))
-	{
-		addVelocity(Vec2(0, -4));
-		upKeyPressed = !upKeyPressed;
-	}
+		dy -= 2 * movementMod;
 
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_A))
-	{
-		addVelocity(Vec2(-4, 0));
-		sideKeyPressed = !sideKeyPressed;
-	}
+		dx -= 2 * movementMod;
+
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_D))
+		dx += 2 * movementMod;
+
+	// Capping max velocity
+	float length = sqrt(dx * dx + dy * dy);
+	if (length > maxVelocity)
 	{
-		addVelocity(Vec2(4, 0));
-		sideKeyPressed = !sideKeyPressed;
+		dx *= maxVelocity / length;
+		dy *= maxVelocity / length;
 	}
 
-	if (this->velocity.length() > maxVelocity)
-	{
-		setVelocity(velocity.getNormalized() * maxVelocity);
-	}
-	
-	addVelocity(-getVelocity() * 0.4f);
-	
-	CCLOG("V: %f , %f", getVelocity().x, getVelocity().y);
-	Player::addPosition(getVelocity());
+	// Applying friction
+	dx *= 0.6f;
+	dy *= 0.6f;
 }
 
-void Player::setVelocity(Vec2 velocity)
+void Player::setPositionX(float x)
 {
-	this->velocity = velocity;
+	this->x = x;
+	baseNode->setPositionX(x);
 }
 
-void Player::addVelocity(Vec2 velocity)
+void Player::setPositionY(float y)
 {
-	this->velocity.add(velocity);
-}
-
-void Player::setPosition(Vec2 pos)
-{
-	Entity::setPosition(pos);
-	sprite->setPosition(pos);
-}
-
-void Player::addPosition(Vec2 pos)
-{
-	Entity::addPosition(pos);
-	sprite->setPosition(getPosition());
-}
-
-Vec2 Player::getVelocity()
-{
-	return velocity;
-}
-
-Sprite* Player::getSprite()
-{
-	return sprite;
+	this->y = y;
+	baseNode->setPositionY(y);
 }

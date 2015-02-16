@@ -3,25 +3,35 @@
 
 #include "cocos2d.h"
 class GameState;
-#include "Entity.h"
 
-class Player : public virtual Entity
+using namespace cocos2d;
+
+class Player
 {
 public:
-	Player(GameState *s, Vec2 position);
+	Player(GameState *gs, float x, float y);
+	~Player();
 
+	float x, y;
+	float dx = 0, dy = 0;
+	float distX = 0, distY = 0;
+	float movementMod = 1;
+	const float WIDTH = 128, HEIGHT = 64;
+	const float offset = (WIDTH + HEIGHT) * 0.22f; // Found through testing, 0.2f is safe 
+	Node *baseNode;
+	
 	void update(float dt);
-	void setVelocity(Vec2 velocity);
-	void addVelocity(Vec2 velocity);
-	void setPosition(Vec2 pos);
-	void addPosition(Vec2 pos);
-	Vec2 getVelocity();
-	Sprite* getSprite();
+	void setPositionX(float x);
+	void setPositionY(float y);
 private:
-	Sprite *sprite;
+	Vector<SpriteFrame*> animFrames;
 	GameState *gs;
-	Vec2 velocity;
+	Sprite *sprite;
 	float maxVelocity;
+	const float DIAGONAL = sqrt(0.5f);
+
+	void move();
+	void updateInput();
 };
 
 #endif
