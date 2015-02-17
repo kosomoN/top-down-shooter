@@ -2,26 +2,21 @@
 #include "GameState.h"
 #include <math.h>
 
+// For debugging
+//#include <sys/timeb.h>
+
 using namespace cocos2d;
 
 Player::Player(GameState *gs, float x, float y)
 {
-	char str[100] = { 0 };
-	for (int i = 0; i < 8; i++)
-	{
-		sprintf(str, "walking_anim.png", i);
-		auto frame = SpriteFrame::create(str, Rect((i % 4) * WIDTH, floor(i / 4) * HEIGHT, WIDTH, HEIGHT));
-		animFrames.pushBack(frame);
-	}
-
 	baseNode = Node::create();
-	sprite = Sprite::create("walking_anim.png");
+	sprite = Sprite::create();
 	baseNode->addChild(sprite);
 
-	auto *animation = Animation::createWithSpriteFrames(animFrames, 0.08f);
-	animation->setLoops(-1);
-	auto *animate = Animate::create(animation);
-	sprite->runAction(animate);
+	loadAnimations();
+
+	// Starting off, the player is standing
+	changeState(STANDING);
 	
 	setPositionX(x);
 	setPositionY(y);
@@ -34,13 +29,69 @@ Player::~Player()
 
 }
 
+void Player::loadAnimations()
+{
+	// Loading walk animation frames
+	Vector<SpriteFrame *> animFrames;
+	char str[100] = { 0 };
+	for (int i = 0; i < 8; i++)
+	{
+		sprintf(str, "walking_anim.png", i);
+		auto frame = SpriteFrame::create(str, Rect((i % 4) * WIDTH, floor(i / 4) * HEIGHT, WIDTH, HEIGHT));
+		animFrames.pushBack(frame);
+	}
+
+	// Creating walk animation from loaded frames
+	auto *walkAnim = Animation::createWithSpriteFrames(animFrames, 0.08f);
+	walkAnim->setLoops(-1);
+	animations.pushBack(walkAnim);
+
+	currentAnim = nullptr;
+}
+
+void Player::changeState(const int state)
+{
+	switch (state)
+	{
+	case STANDING:
+		currentState = STANDING;
+		if (currentAnim != nullptr)
+			sprite->stopAction(currentAnim);
+	
+		sprite->setTexture("Player_standing.png");
+		currentAnim = nullptr;
+		break;
+	case WALKING:
+		currentState = WALKING;
+		if (currentAnim != nullptr)
+			sprite->stopAction(currentAnim);
+
+		currentAnim = Animate::create(animations.at(0));
+		sprite->runAction(currentAnim);
+		break;
+	case ATTACKING:
+		currentState = ATTACKING;
+		if (currentAnim != nullptr)
+			sprite->stopAction(currentAnim);
+
+		currentAnim = Animate::create(animations.at(1));
+		sprite->runAction(currentAnim);
+		break;
+	default:
+		CCLOG("Error: 'No such player state' (%i)", state);
+		return;
+	}
+
+	CCLOG("Changing to state: %s", (state == STANDING ? "Standing" : state == WALKING ? "Walking" : state == ATTACKING ? "Attacking" : ""));
+}
+
 void Player::update(float dt)
 {
 	distX = gs->mouseX - (x + baseNode->getParent()->getPositionX());
 	distY = -gs->mouseY + y + baseNode->getParent()->getPositionY(); // y is swapped
 	float angle = CC_RADIANS_TO_DEGREES(atan2(distY, distX)) + 90;
 	sprite->setRotation(angle);
-	
+
 	// Getting input
 	updateInput();
 
@@ -80,6 +131,18 @@ void Player::move()
 		setPositionX(tempX);
 	if (y_axis)
 		setPositionY(tempY);
+
+	// Attacking is the most important and cannot be overridden
+	if (abs(dx) > 0.1f || abs(dy) > 0.1f)
+	{
+		if (currentState != ATTACKING && currentState != WALKING)
+			changeState(WALKING);
+	}
+	else
+	{
+		if (currentState != ATTACKING && currentState != STANDING)
+			changeState(STANDING);
+	}
 }
 
 void Player::updateInput()
@@ -128,3 +191,19 @@ void Player::setPositionY(float y)
 	this->y = y;
 	baseNode->setPositionY(y);
 }
+
+/* DEBUGGING TOOLS
+int Player::getMilliCount(){
+timeb tb;
+ftime(&tb);
+int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
+return nCount;
+}
+
+int Player::getMilliSpan(int nTimeStart){
+int nSpan = getMilliCount() - nTimeStart;
+if (nSpan < 0)
+nSpan += 0x100000 * 1000;
+return nSpan;
+}
+*/
