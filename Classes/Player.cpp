@@ -1,27 +1,28 @@
 #include "Player.h"
 #include "GameState.h"
+#include "Bullet.h"
 #include <math.h>
-
-// For debugging
-//#include <sys/timeb.h>
 
 using namespace cocos2d;
 
 Player::Player(GameState *gs, float x, float y)
 {
+	this->gs = gs;
+	this->maxVelocity = 9;
+
 	baseNode = Node::create();
 	sprite = Sprite::create();
 	baseNode->addChild(sprite);
 
 	loadAnimations();
 
+	sprite->setAnchorPoint(Vec2(0.5f, 0.18f));
+
 	// Starting off, the player is standing
 	changeState(STANDING);
-	
+
 	setPositionX(x);
 	setPositionY(y);
-	this->gs = gs;
-	this->maxVelocity = 9;
 }
 
 Player::~Player()
@@ -42,7 +43,7 @@ void Player::loadAnimations()
 	}
 
 	// Creating walk animation from loaded frames
-	auto *walkAnim = Animation::createWithSpriteFrames(animFrames, 0.08f);
+	auto *walkAnim = Animation::createWithSpriteFrames(animFrames, 0.1f);
 	walkAnim->setLoops(-1);
 	animations.pushBack(walkAnim);
 
@@ -95,6 +96,9 @@ void Player::update(float dt)
 	// Getting input
 	updateInput();
 
+	// Update shooting
+	lastShot++;
+
 	// Moving
 	move();
 }
@@ -145,6 +149,15 @@ void Player::move()
 	}
 }
 
+void Player::shoot(float rotation)
+{
+	if (lastShot >= fireRate)
+	{
+		gs->addEntity(new Bullet(gs, this, cosf(CC_DEGREES_TO_RADIANS(rotation)) * 24, -sinf(CC_DEGREES_TO_RADIANS(rotation)) * 24));
+		lastShot = 0;
+	}
+}
+
 void Player::updateInput()
 {
 	movementMod = 1;
@@ -156,16 +169,21 @@ void Player::updateInput()
 	}
 
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_W))
-		dy += 2 * movementMod;
+		dy += 3 * movementMod;
 
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_S))
-		dy -= 2 * movementMod;
+		dy -= 3 * movementMod;
 
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_A))
-		dx -= 2 * movementMod;
+		dx -= 3 * movementMod;
 
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_D))
-		dx += 2 * movementMod;
+		dx += 3 * movementMod;
+
+	if (gs->mouseDown)
+	{
+		shoot(sprite->getRotation() - 90);
+	}
 
 	// Capping max velocity
 	float length = sqrt(dx * dx + dy * dy);
@@ -191,19 +209,3 @@ void Player::setPositionY(float y)
 	this->y = y;
 	baseNode->setPositionY(y);
 }
-
-/* DEBUGGING TOOLS
-int Player::getMilliCount(){
-timeb tb;
-ftime(&tb);
-int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
-return nCount;
-}
-
-int Player::getMilliSpan(int nTimeStart){
-int nSpan = getMilliCount() - nTimeStart;
-if (nSpan < 0)
-nSpan += 0x100000 * 1000;
-return nSpan;
-}
-*/

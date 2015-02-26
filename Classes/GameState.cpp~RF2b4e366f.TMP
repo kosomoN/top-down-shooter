@@ -1,8 +1,6 @@
 #include "GameState.h"
 #include "Camera2d.h"
 #include "Player.h"
-#include "Entity.h"
-#include "Bullet.h"
 #include "AppDelegate.h"
 
 USING_NS_CC;
@@ -46,7 +44,6 @@ bool GameState::init()
 	auto mouse = EventListenerMouse::create();
 	mouse->onMouseDown = CC_CALLBACK_1(GameState::onMouseDown, this);
 	mouse->onMouseMove = CC_CALLBACK_1(GameState::onMouseMove, this);
-	mouse->onMouseUp = CC_CALLBACK_1(GameState::onMouseUp, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(mouse, this);
 
 	// Add update method to schedule with some interval in seconds
@@ -57,15 +54,7 @@ bool GameState::init()
 
 void GameState::update(float dt)
 {
-	// Update player
 	player->update(dt);
-
-	// Update each entity
-	for (unsigned int i = 0; i < entities.size(); i++)
-	{
-		entities.at(i)->update(dt);
-	}
-
 	// Camera origin is lower left, 5.0f came through testing
 	camera->setPositionX(-(player->x + player->distX / 5.0f - 960 / 2));
 	camera->setPositionY(-(player->y - player->distY / 5.0f - 640 / 2));
@@ -74,7 +63,6 @@ void GameState::update(float dt)
 void GameState::addEntity(Entity *entity)
 {
 	entities.push_back(entity);
-	CCLOG("Enitity added");
 }
 
 void GameState::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *e)
@@ -97,7 +85,7 @@ void GameState::onMouseDown(Event *e)
 
 void GameState::onMouseUp(Event *e)
 {
-	mouseDown = false;
+
 }
 
 void GameState::onMouseMove(Event *e)
