@@ -1,6 +1,6 @@
 #include "Player.h"
-#include "GameState.h"
 #include "Bullet.h"
+#include "Entity.h"
 #include <math.h>
 
 using namespace cocos2d;
@@ -9,20 +9,24 @@ Player::Player(GameState *gs, float x, float y)
 {
 	this->gs = gs;
 	this->maxVelocity = 9;
+	this->entity_type = PLAYER;
+	this->width = WIDTH;
+	this->height = WIDTH;
+	this->x = x;
+	this->y = y;
 
 	baseNode = Node::create();
 	sprite = Sprite::create();
 	baseNode->addChild(sprite);
-
 	loadAnimations();
-
 	sprite->setAnchorPoint(Vec2(0.5f, 0.18f));
+	baseNode->setPositionX(x);
+	baseNode->setPositionY(y);
 
 	// Starting off, the player is standing
 	changeState(STANDING);
 
-	setPositionX(x);
-	setPositionY(y);
+	gs->camera->addChild(baseNode);
 }
 
 Player::~Player()
@@ -99,43 +103,6 @@ void Player::update(float dt)
 	// Update shooting
 	lastShot++;
 
-	// Moving
-	move();
-}
-
-void Player::move()
-{
-	float tempX = x + dx;
-	float tempY = y + dy;
-	bool x_axis = true, y_axis = true;
-
-	// Checking rectangular hitboxes
-	for (unsigned int i = 0; i < gs->mapHitboxes->getObjects().size(); i++)
-	{
-		ValueMap valMap = gs->mapHitboxes->getObjects().at(i).asValueMap();
-		float valX = valMap["x"].asFloat();
-		float valY = valMap["y"].asFloat();
-		float valWidth = valMap["width"].asFloat();
-		float valHeight = valMap["height"].asFloat();
-
-		if (tempX - offset < valX + valWidth && tempX + offset > valX &&
-			tempY - offset < valY + valHeight && tempY + offset > valY)
-		{
-			// 1. Was x-axis the frame before "intersecting"? if yes then disable y-axis else go to 2.
-			// 2. Was y-axis the frame before "intersecting"? if yes then disable x-axis else do nothing
-
-			if (x - offset < valX + valWidth && x + offset > valX)
-				y_axis = false;
-			else if (y - offset < valY + valHeight && y + offset > valY)
-				x_axis = false;
-		}
-	}
-
-	if (x_axis)
-		setPositionX(tempX);
-	if (y_axis)
-		setPositionY(tempY);
-
 	// Attacking is the most important and cannot be overridden
 	if (abs(dx) > 0.1f || abs(dy) > 0.1f)
 	{
@@ -147,6 +114,9 @@ void Player::move()
 		if (currentState != ATTACKING && currentState != STANDING)
 			changeState(STANDING);
 	}
+
+	x_axis = true;
+	y_axis = true;
 }
 
 void Player::shoot(float rotation)
@@ -180,10 +150,12 @@ void Player::updateInput()
 	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_D))
 		dx += 3 * movementMod;
 
+	// Temporary to help development
+	if (gs->isKeyDown(EventKeyboard::KeyCode::KEY_R))
+		gs->reset();
+
 	if (gs->mouseDown)
-	{
 		shoot(sprite->getRotation() - 90);
-	}
 
 	// Capping max velocity
 	float length = sqrt(dx * dx + dy * dy);
@@ -196,6 +168,11 @@ void Player::updateInput()
 	// Applying friction
 	dx *= 0.6f;
 	dy *= 0.6f;
+}
+
+void Player::destroy()
+{
+	gs->camera->removeChild(baseNode, true);
 }
 
 void Player::setPositionX(float x)

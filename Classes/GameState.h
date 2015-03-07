@@ -2,10 +2,10 @@
 #define GAMESTATE_H
 
 #include "cocos2d.h"
-class Camera2d;
 class Player;
 class Entity;
 class Bullet;
+class Physics;
 
 using namespace cocos2d;
 
@@ -20,11 +20,15 @@ public:
 	Node *camera;
 	TMXObjectGroup* mapHitboxes;
 	Player *player;
+	Physics *physics;
+	std::vector<Entity*> entities;
 	float mouseX = 0, mouseY = 0;
 	bool mouseDown = false;
 
 	void update(float dt);
+	void reset();
 	void addEntity(Entity *entity);
+	void removeEntity(Entity *entity);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *e);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *e);
 	void onMouseDown(Event *e);
@@ -34,7 +38,6 @@ public:
 	Player *getPlayer() { return player; }
 private:
 	TMXTiledMap *map;
-	std::vector<Entity*> entities;
 	std::vector<Bullet*> bullets;
 	std::vector<EventKeyboard::KeyCode> keysDown;
 };

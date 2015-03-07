@@ -1,8 +1,10 @@
 #include "GameState.h"
-#include "Camera2d.h"
-#include "Player.h"
 #include "Entity.h"
+#include "Physics.h"
+#include "Player.h"
 #include "Bullet.h"
+#include "EnemyScout.h"
+#include "Wall.h"
 #include "AppDelegate.h"
 
 USING_NS_CC;
@@ -23,16 +25,16 @@ bool GameState::init()
 	}
 
 	// Load map from .tmx
-	map = TMXTiledMap::create("Map2.tmx");
+	map = TMXTiledMap::create("Map1.tmx");
 	mapHitboxes = map->getObjectGroup("Walls");
 
 	camera = Node::create();
 	camera->setPosition(Vec2(0, 0));
 	camera->addChild(map);
 
-	// Create player
-	player = new Player(this, 200, 250);
-	camera->addChild(player->baseNode);
+	physics = new Physics(this);
+
+	reset();
 	
 	// Add camera node to layer
 	addChild(camera);
@@ -57,24 +59,53 @@ bool GameState::init()
 
 void GameState::update(float dt)
 {
-	// Update player
-	player->update(dt);
-
 	// Update each entity
 	for (unsigned int i = 0; i < entities.size(); i++)
 	{
 		entities.at(i)->update(dt);
 	}
 
+	physics->update();
+
 	// Camera origin is lower left, 5.0f came through testing
 	camera->setPositionX(-(player->x + player->distX / 5.0f - 960 / 2));
 	camera->setPositionY(-(player->y - player->distY / 5.0f - 640 / 2));
 }
 
+void GameState::reset()
+{
+	for (unsigned int i = 0; i < entities.size(); i++)
+	{
+		entities.at(i)->destroy();
+	}
+	entities.clear();
+
+	// Add walls as entities
+	for (unsigned int i = 0; i < mapHitboxes->getObjects().size(); i++)
+	{
+		ValueMap valMap = mapHitboxes->getObjects().at(i).asValueMap();
+		addEntity(new Wall(
+			valMap["x"].asFloat() + valMap["width"].asFloat() / 2.0f,
+			valMap["y"].asFloat() + valMap["height"].asFloat() / 2.0f,
+			valMap["width"].asFloat(), valMap["height"].asFloat()));
+	}
+
+	player = new Player(this, 500, 500);
+	addEntity(player);
+
+	// Add a test enemy scout
+	addEntity(new EnemyScout(this, 100, 100));
+}
+
 void GameState::addEntity(Entity *entity)
 {
 	entities.push_back(entity);
-	CCLOG("Enitity added");
+}
+
+void GameState::removeEntity(Entity *entity)
+{
+	entity->destroy();
+	entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
 }
 
 void GameState::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *e)

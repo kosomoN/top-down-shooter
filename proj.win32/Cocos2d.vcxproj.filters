@@ -16,9 +16,6 @@
     <Filter Include="src\states">
       <UniqueIdentifier>{2998dbb7-c91e-4124-8961-cadda8c7aac8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\entities\items">
-      <UniqueIdentifier>{39a41781-f86a-4599-b09c-b9eb322f9450}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\entities\enemies">
       <UniqueIdentifier>{79e22e41-b9e3-4086-9edf-9d6fcc735d5a}</UniqueIdentifier>
     </Filter>
@@ -45,11 +42,17 @@
     <ClCompile Include="..\Classes\Utils.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Item.cpp">
-      <Filter>src\entities\items</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\EnemyScout.cpp">
       <Filter>src\entities\enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MainMenuState.cpp">
+      <Filter>src\states</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Wall.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Physics.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,9 +71,6 @@
     <ClInclude Include="..\Classes\Player.h">
       <Filter>src\entities</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Item.h">
-      <Filter>src\entities\items</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Bullet.h">
       <Filter>src\entities</Filter>
     </ClInclude>
@@ -79,6 +79,15 @@
     </ClInclude>
     <ClInclude Include="..\Classes\EnemyScout.h">
       <Filter>src\entities\enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MainMenuState.h">
+      <Filter>src\states</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Wall.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Physics.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

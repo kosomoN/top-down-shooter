@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="10" height="10" tilewidth="128" tileheight="128">
+ <tileset firstgid="1" name="terrain" tilewidth="128" tileheight="128">
+  <image source="Tileset2.png" width="256" height="128"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFgwYDAFB4AGU=
+  </data>
+ </layer>
+ <objectgroup name="Walls">
+  <object x="0" y="0" width="1280" height="10"/>
+  <object x="0" y="10" width="10" height="1260"/>
+  <object x="0" y="1270" width="1280" height="10"/>
+  <object x="1270" y="10" width="10" height="1260"/>
+ </objectgroup>
+</map>

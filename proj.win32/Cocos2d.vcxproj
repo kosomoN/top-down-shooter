@@ -142,9 +142,11 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\EnemyScout.cpp" />
     <ClCompile Include="..\Classes\Entity.cpp" />
     <ClCompile Include="..\Classes\GameState.cpp" />
-    <ClCompile Include="..\Classes\Item.cpp" />
+    <ClCompile Include="..\Classes\MainMenuState.cpp" />
+    <ClCompile Include="..\Classes\Physics.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
     <ClCompile Include="..\Classes\Utils.cpp" />
+    <ClCompile Include="..\Classes\Wall.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +155,11 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\EnemyScout.h" />
     <ClInclude Include="..\Classes\Entity.h" />
     <ClInclude Include="..\Classes\GameState.h" />
-    <ClInclude Include="..\Classes\Item.h" />
+    <ClInclude Include="..\Classes\MainMenuState.h" />
+    <ClInclude Include="..\Classes\Physics.h" />
     <ClInclude Include="..\Classes\Player.h" />
     <ClInclude Include="..\Classes\Utils.h" />
+    <ClInclude Include="..\Classes\Wall.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

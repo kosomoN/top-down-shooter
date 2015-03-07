@@ -14,14 +14,14 @@
   </data>
  </layer>
  <objectgroup name="Walls">
-  <object x="236" y="108" width="808" height="20"/>
+  <object x="256" y="108" width="768" height="20"/>
   <object x="1024" y="128" width="20" height="512"/>
-  <object x="640" y="640" width="404" height="20"/>
-  <object x="236" y="640" width="276" height="20"/>
+  <object x="640" y="640" width="386" height="20"/>
+  <object x="256" y="640" width="256" height="20"/>
   <object x="236" y="128" width="20" height="512"/>
   <object x="1270" y="2" width="30" height="1274"/>
-  <object x="0" y="1270" width="1298" height="24"/>
+  <object x="8" y="1270" width="1260" height="24"/>
   <object x="-16" y="0" width="22" height="1278"/>
-  <object x="-28" y="0" width="1324" height="8"/>
+  <object x="8" y="0" width="1258" height="8"/>
  </objectgroup>
 </map>
